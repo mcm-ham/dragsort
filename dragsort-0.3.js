@@ -1,5 +1,5 @@
 /*
-	jQuery List DragSort v0.3
+	jQuery List DragSort v0.3.7
 	Website: http://dragsort.codeplex.com/
 	License: http://dragsort.codeplex.com/license
 */
@@ -66,6 +66,15 @@
 						top = Math.min(this.offsetLimit.bottom, Math.max(top, this.offsetLimit.top));
 						left = Math.min(this.offsetLimit.right, Math.max(left, this.offsetLimit.left));
 					}
+
+					this.draggedItem.parents().each(function() {
+						if ($(this).css("position") == "absolute" || $(this).css("position") == "relative") {
+							var offset = $(this).offset();
+							top -= offset.top;
+							left -= offset.left;
+							return false;
+						}
+					});
 
 					this.draggedItem.css({ top: top, left: left });
 				},
