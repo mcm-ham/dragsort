@@ -68,7 +68,7 @@
 					}
 
 					this.draggedItem.parents().each(function() {
-						if ($(this).css("position") == "absolute" || $(this).css("position") == "relative") {
+						if ($(this).css("position") != "static") {
 							var offset = $(this).offset();
 							top -= offset.top;
 							left -= offset.left;
