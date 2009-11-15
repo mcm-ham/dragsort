@@ -4,8 +4,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-	<script type="text/javascript" src="jquery-1.3.2.min.js"></script>
-	<script type="text/javascript" src="dragsort-0.3.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+	<script type="text/javascript" src="dragsort-0.3.js"></script>
 	<style type="text/css">
 		body { font-family: Arial; font-size:12pt; padding:20px; width: 800px; margin:auto; border:solid 1px black; padding-top: 20px; margin-top:20px; }
 		h1 { font-size: 16pt; }
@@ -13,6 +13,7 @@
 		ul { width:350px; list-style-type: none; margin:0px; padding:0px; }
 		li { float:left; padding:5px; width:100px; height:100px; }
 		li div { width:90px; height:50px; border:solid 1px black; background-color:#E0E0E0; text-align:center; padding-top:40px; }
+		.placeHolder div { background-color: white !important; border: dashed 1px gray !important; }
 	</style>
 </head>
 <body>
@@ -37,7 +38,7 @@
 		</ul>
 		
 		<script type="text/javascript">
-		    $("#gallery").dragsort({ dragSelector: "li div", dragEnd: saveOrder });
+		    $("#gallery").dragsort({ dragSelector: "li div", dragEnd: saveOrder, placeHolderTemplate: "<div></div>" });
 
 		    function saveOrder() {
 		        var serialStr = "";

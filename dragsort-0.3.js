@@ -45,7 +45,7 @@
 					list.offsetLimit.right = list.offsetLimit.left + $(list.container).outerWidth() - list.draggedItem.outerWidth();
 					list.offsetLimit.bottom = list.offsetLimit.top + containerHeight - list.draggedItem.outerHeight();
 
-					list.placeHolderItem = list.draggedItem.clone().html("&nbsp;").css({ visibility: "hidden", height: list.draggedItem.height() }).attr("placeHolder", true);
+					list.placeHolderItem = list.draggedItem.clone().html(opts.placeHolderTemplate).addClass(opts.placeHolderClass).css("height", list.draggedItem.height()).attr("placeHolder", true);
 					list.draggedItem.after(list.placeHolderItem);
 					list.draggedItem.css({ position: "absolute", opacity: 0.8 });
 
@@ -68,7 +68,7 @@
 					}
 
 					this.draggedItem.parents().each(function() {
-						if ($(this).css("position") != "static") {
+						if ($(this).css("position") != "static"  && (!$.browser.mozilla || $(this).css("display") != "table")) {
 							var offset = $(this).offset();
 							top -= offset.top;
 							left -= offset.left;
@@ -182,7 +182,9 @@
 		itemSelector: "li",
         dragSelector: "li",
         dragEnd: function() { },
-		dragBetween: false
+		dragBetween: false,
+		placeHolderClass: "placeHolder",
+		placeHolderTemplate: "&nbsp;"
     };
 
 })(jQuery);
