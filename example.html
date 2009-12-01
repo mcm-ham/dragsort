@@ -65,8 +65,17 @@
 		<li><div>9</div></li>
 	</ul>
 	
+	<!-- save sort order here which can be retrieved on server on postback -->
+	<input name="list1SortOrder" type="hidden" />
+	
 	<script type="text/javascript">
-		$("#list1, #list2").dragsort({ dragSelector: "li > div", dragBetween: true, placeHolderTemplate: "<div></div>" });
+		$("#list1, #list2").dragsort({ dragSelector: "li > div", dragBetween: true, placeHolderTemplate: "<div></div>", dragEnd: saveOrder });
+		
+		function saveOrder() {
+			var serialStr = "";
+			$("#list1 li").each(function(i, elm) { serialStr += (i > 0 ? "|" : "") + $(elm).children().html(); });
+			$("input[name=list1SortOrder]").val(serialStr);
+		};
 	</script>
 	
 	<div style="clear:both;"></div>

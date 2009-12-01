@@ -35,12 +35,12 @@
 					$(this).css("cursor", "move");
 
 					list = lists[$(this).parents("*[listIdx]").attr("listIdx")];
-					list.draggedItem = $(this).is(opts.itemSelector) ? $(this) : $(this).parents(opts.itemSelector);
+					list.draggedItem = $(this).is(opts.itemSelector) ? $(this) : $(this).closest(opts.itemSelector);
 					list.offset = list.draggedItem.offset();
 					list.offset.top = e.pageY - list.offset.top;
 					list.offset.left = e.pageX - list.offset.left;
 
-					var containerHeight = $(list.container).outerHeight() == 0 ? Math.max(1, Math.round(0.5 + $(list.container).find(opts.itemSelector).size() * list.draggedItem.outerWidth() / $(list.container).outerWidth())) * list.draggedItem.outerHeight() : $(list.container).outerHeight();
+					var containerHeight = $(list.container).outerHeight() == 0 ? Math.max(1, Math.round(0.5 + $(list.container).children(opts.itemSelector).size() * list.draggedItem.outerWidth() / $(list.container).outerWidth())) * list.draggedItem.outerHeight() : $(list.container).outerHeight();
 					list.offsetLimit = $(list.container).offset();
 					list.offsetLimit.right = list.offsetLimit.left + $(list.container).outerWidth() - list.draggedItem.outerWidth();
 					list.offsetLimit.bottom = list.offsetLimit.top + containerHeight - list.draggedItem.outerHeight();
@@ -82,7 +82,7 @@
 				buildPositionTable: function() {
 					var item = this.draggedItem == null ? null : this.draggedItem.get(0);
 					var pos = new Array();
-					$(this.container).find(opts.itemSelector).each(function(i, elm) {
+					$(this.container).children(opts.itemSelector).each(function(i, elm) {
 						if (elm != item) {
 							var loc = $(elm).offset();
 							loc.right = loc.left + $(elm).width();
@@ -157,7 +157,7 @@
 					var item = this.draggedItem == null ? null : this.draggedItem.get(0);
 					var emptyPH = null, empty = true;
 					
-					$(this.container).find(opts.itemSelector).each(function(i, elm) {
+					$(this.container).children(opts.itemSelector).each(function(i, elm) {
 						if ($(elm).attr("emptyPlaceHolder"))
 							emptyPH = elm;
 						else if (elm != item)
