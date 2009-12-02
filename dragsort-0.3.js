@@ -26,7 +26,8 @@
 				},
 
 				grabItem: function(e) {
-					if (e.button == 2)
+					var target = e.srcElement || e.target;
+					if (e.button == 2 || target.tagName == "INPUT" || target.tagName == "A" && target.getAttribute("href") != null)
 						return;
 					
 					if (list != null && list.draggedItem != null)
