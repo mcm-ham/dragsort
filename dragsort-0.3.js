@@ -1,5 +1,5 @@
 /*
-	jQuery List DragSort v0.3.7
+	jQuery List DragSort v0.3.8 dev build
 	Website: http://dragsort.codeplex.com/
 	License: http://dragsort.codeplex.com/license
 */
@@ -22,29 +22,36 @@
 				container: cont,
 
 				init: function() {
-					$(this.container).attr("listIdx", i).find(opts.dragSelector).css("cursor", "pointer").mousedown(this.grabItem);
+					$(this.container).attr("listIdx", i).mousedown(this.grabItem).find(opts.dragSelector).css("cursor", "pointer");
 				},
 
 				grabItem: function(e) {
-					var target = e.srcElement || e.target;
-					if (e.button == 2 || target.tagName == "INPUT" || target.tagName == "A" && target.getAttribute("href") != null)
+					if (e.button == 2 || e.target.tagName == "INPUT" || e.target.tagName == "A" && e.target.getAttribute("href") != null)
 						return;
-					
+
+					var elm = e.target;
+					while (!$(elm).is(opts.dragSelector)) {
+						if (elm == this) return;
+						elm = elm.parentNode;
+					}
+
 					if (list != null && list.draggedItem != null)
 						list.dropItem();
 
-					$(this).css("cursor", "move");
+					$(e.target).css("cursor", "move");
 
-					list = lists[$(this).parents("*[listIdx]").attr("listIdx")];
-					list.draggedItem = $(this).is(opts.itemSelector) ? $(this) : $(this).closest(opts.itemSelector);
+					list = lists[$(this).attr("listIdx")];
+					list.draggedItem = $(elm).closest(opts.itemSelector);
 					list.offset = list.draggedItem.offset();
 					list.offset.top = e.pageY - list.offset.top;
 					list.offset.left = e.pageX - list.offset.left;
 
-					var containerHeight = $(list.container).outerHeight() == 0 ? Math.max(1, Math.round(0.5 + $(list.container).children(opts.itemSelector).size() * list.draggedItem.outerWidth() / $(list.container).outerWidth())) * list.draggedItem.outerHeight() : $(list.container).outerHeight();
-					list.offsetLimit = $(list.container).offset();
-					list.offsetLimit.right = list.offsetLimit.left + $(list.container).outerWidth() - list.draggedItem.outerWidth();
-					list.offsetLimit.bottom = list.offsetLimit.top + containerHeight - list.draggedItem.outerHeight();
+					if (!opts.dragBetween) {
+						var containerHeight = $(list.container).outerHeight() == 0 ? Math.max(1, Math.round(0.5 + $(list.container).children(opts.itemSelector).size() * list.draggedItem.outerWidth() / $(list.container).outerWidth())) * list.draggedItem.outerHeight() : $(list.container).outerHeight();
+						list.offsetLimit = $(list.container).offset();
+						list.offsetLimit.right = list.offsetLimit.left + $(list.container).outerWidth() - list.draggedItem.outerWidth();
+						list.offsetLimit.bottom = list.offsetLimit.top + containerHeight - list.draggedItem.outerHeight();
+					}
 
 					list.placeHolderItem = list.draggedItem.clone().html(opts.placeHolderTemplate).addClass(opts.placeHolderClass).css("height", list.draggedItem.height()).attr("placeHolder", true);
 					list.draggedItem.after(list.placeHolderItem);
