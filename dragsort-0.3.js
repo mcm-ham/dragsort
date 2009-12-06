@@ -30,7 +30,7 @@
 						return;
 
 					var elm = e.target;
-					while (!$(elm).is(opts.dragSelector)) {
+					while (!$(elm).is("[listIdx=" + $(this).attr("listIdx") + "] " + opts.dragSelector)) {
 						if (elm == this) return;
 						elm = elm.parentNode;
 					}
