@@ -53,9 +53,8 @@
 						list.offsetLimit.bottom = list.offsetLimit.top + containerHeight - list.draggedItem.outerHeight();
 					}
 
-					list.placeHolderItem = list.draggedItem.clone().html(opts.placeHolderTemplate).addClass(opts.placeHolderClass).css("height", list.draggedItem.height()).attr("placeHolder", true);
-					list.draggedItem.after(list.placeHolderItem);
-					list.draggedItem.css({ position: "absolute", opacity: 0.8 });
+					list.draggedItem.css({ position: "absolute", opacity: 0.8 }).after(opts.placeHolderTemplate);
+					list.placeHolderItem = list.draggedItem.next().css("height", list.draggedItem.height()).attr("placeHolder", true);
 
 					$(lists).each(function(i, l) { l.ensureNotEmpty(); l.buildPositionTable(); });
 
@@ -173,7 +172,7 @@
 					});
 					
 					if (empty && emptyPH == null)
-						$(this.container).append(list.placeHolderItem.clone().removeAttr("placeHolder").attr("emptyPlaceHolder", true));
+						$(this.container).append(opts.placeHolderTemplate).children(":last").attr("emptyPlaceHolder", true);
 					else if (!empty && emptyPH != null)
 						$(emptyPH).remove();
 				}
@@ -191,8 +190,7 @@
         dragSelector: "li",
         dragEnd: function() { },
 		dragBetween: false,
-		placeHolderClass: "placeHolder",
-		placeHolderTemplate: "&nbsp;"
+		placeHolderTemplate: "<li>&nbsp;</li>"
     };
 
 })(jQuery);
