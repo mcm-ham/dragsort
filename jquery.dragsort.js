@@ -1,7 +1,7 @@
 /*
-jQuery List DragSort v0.3.8
-Website: http://dragsort.codeplex.com/
-License: http://dragsort.codeplex.com/license
+	jQuery List DragSort v0.3.8
+	Website: http://dragsort.codeplex.com/
+	License: http://dragsort.codeplex.com/license
 */
 
 (function($) {

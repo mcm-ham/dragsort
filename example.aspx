@@ -39,9 +39,9 @@
 		    $("#gallery").dragsort({ dragSelector: "div", dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 
 		    function saveOrder() {
-		        var serialStr = "";
-		        $("#gallery li").each(function(i, elm) { serialStr += (i > 0 ? "|" : "") + $(elm).attr("itemID"); });
-		        $.ajax({ url: "example.aspx/SaveListOrder", data: '{"ids":"' + serialStr + '"}', dataType: "json", type: "POST", contentType: "application/json; charset=utf-8" });
+		        var data = new Array();
+		        $("#gallery li").each(function(i, elm) { data[i] = $(elm).attr("itemID"); });
+				$.ajax({ url: "example.aspx/SaveListOrder", data: '{"ids":["' + data.join('","') + '"]}', dataType: "json", type: "POST", contentType: "application/json; charset=utf-8" });
 		    };
 	    </script>
         

@@ -1,8 +1,8 @@
 <?php
 	if ($_POST) {
-		$vals = explode("|", $_POST["ids"]);
-		for ($idx = 0; $idx < count($vals); $idx+=1) {
-			$id = $vals[$idx];
+		$ids = $_POST["ids"];
+		for ($idx = 0; $idx < count($ids); $idx+=1) {
+			$id = $ids[$idx];
 			$ordinal = $idx;
 			//...
 		}
@@ -50,9 +50,9 @@
 		    $("#gallery").dragsort({ dragSelector: "div", dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 
 		    function saveOrder() {
-		        var serialStr = "";
-		        $("#gallery li").each(function(i, elm) { serialStr += (i > 0 ? "|" : "") + $(elm).attr("itemID"); });
-		        $.post("example.php", { ids: serialStr });
+		        var data = new Array();
+		        $("#gallery li").each(function(i, elm) { data[i] = $(elm).attr("itemID"); });
+		        $.post("example.php", { "ids[]": data });
 		    };
 	    </script>
         
