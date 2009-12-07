@@ -1,12 +1,12 @@
 /*
-	jQuery List DragSort v0.3.8 dev build
-	Website: http://dragsort.codeplex.com/
-	License: http://dragsort.codeplex.com/license
+jQuery List DragSort v0.3.8
+Website: http://dragsort.codeplex.com/
+License: http://dragsort.codeplex.com/license
 */
 
 (function($) {
 
-    $.fn.dragsort = function(options) {
+	$.fn.dragsort = function(options) {
 		var opts = $.extend({}, $.fn.dragsort.defaults, options);
 		var lists = new Array();
 		var list = null, lastPos = null;
@@ -75,7 +75,7 @@
 					}
 
 					this.draggedItem.parents().each(function() {
-						if ($(this).css("position") != "static"  && (!$.browser.mozilla || $(this).css("display") != "table")) {
+						if ($(this).css("position") != "static" && (!$.browser.mozilla || $(this).css("display") != "table")) {
 							var offset = $(this).offset();
 							top -= offset.top;
 							left -= offset.left;
@@ -110,7 +110,7 @@
 
 					list.draggedItem.css({ position: "", top: "", left: "", opacity: "" });
 					list.placeHolderItem.remove();
-					
+
 					$("*[emptyPlaceHolder]").remove();
 
 					opts.dragEnd.apply(list.draggedItem);
@@ -156,21 +156,21 @@
 					}
 					return -1;
 				},
-				
+
 				ensureNotEmpty: function() {
 					if (!opts.dragBetween)
 						return;
 
 					var item = this.draggedItem == null ? null : this.draggedItem.get(0);
 					var emptyPH = null, empty = true;
-					
+
 					$(this.container).children(opts.itemSelector).each(function(i, elm) {
 						if ($(elm).attr("emptyPlaceHolder"))
 							emptyPH = elm;
 						else if (elm != item)
 							empty = false;
 					});
-					
+
 					if (empty && emptyPH == null)
 						$(this.container).append(opts.placeHolderTemplate).children(":last").attr("emptyPlaceHolder", true);
 					else if (!empty && emptyPH != null)
@@ -183,14 +183,14 @@
 		});
 
 		return this;
-    };
+	};
 
-    $.fn.dragsort.defaults = {
+	$.fn.dragsort.defaults = {
 		itemSelector: "li",
-        dragSelector: "li",
-        dragEnd: function() { },
+		dragSelector: "li",
+		dragEnd: function() { },
 		dragBetween: false,
 		placeHolderTemplate: "<li>&nbsp;</li>"
-    };
+	};
 
 })(jQuery);
