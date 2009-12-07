@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-	<script type="text/javascript" src="dragsort-0.3.js"></script>
+	<script type="text/javascript" src="jquery.dragsort-0.3.js"></script>
 	<style type="text/css">
 		body { font-family: Arial; font-size:12pt; padding:20px; width: 800px; margin:auto; border:solid 1px black; padding-top: 20px; margin-top:20px; }
 		h1 { font-size: 16pt; }
