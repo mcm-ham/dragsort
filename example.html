@@ -5,15 +5,15 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 	<script type="text/javascript" src="jquery.dragsort.js"></script>
 	<style type="text/css">
-		body { font-family: Arial; font-size:12pt; padding:20px; width: 800px; margin:auto; border:solid 1px black; padding-top: 20px; margin-top:20px; }
-		h1 { font-size: 16pt; }
-		h2 { font-size: 13pt; }
+		body { font-family:Arial; font-size:12pt; padding:20px; width:800px; margin:20px auto; border:solid 1px black; }
+		h1 { font-size:16pt; }
+		h2 { font-size:13pt; }
 		ul { margin:0px; padding:0px; margin-left:20px; }
-		#list1, #list2 { width:350px; list-style-type: none; margin:0px; }
+		#list1, #list2 { width:350px; list-style-type:none; margin:0px; }
 		#list1 li, #list2 li { float:left; padding:5px; width:100px; height:100px; }
 		#list1 div, #list2 div { width:90px; height:50px; border:solid 1px black; background-color:#E0E0E0; text-align:center; padding-top:40px; }
-		#list2 { float: right; }
-		.placeHolder div { background-color: white !important; border: dashed 1px gray !important; }
+		#list2 { float:right; }
+		.placeHolder div { background-color:white !important; border:dashed 1px gray !important; }
 	</style>
 </head>
 <body>
@@ -69,7 +69,7 @@
 	<input name="list1SortOrder" type="hidden" />
 	
 	<script type="text/javascript">
-		$("#list1, #list2").dragsort({ dragSelector: "li > div", dragBetween: true, dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
+		$("#list1, #list2").dragsort({ dragSelector: "div", dragBetween: true, dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 		
 		function saveOrder() {
 			var serialStr = "";
@@ -79,5 +79,19 @@
 	</script>
 	
 	<div style="clear:both;"></div>
+	
+	<h2>Usage</h2>
+	$("ul").dragsort({ dragSelector: "li", dragEnd: function() { }, dragBetween: false, placeHolderTemplate: "&lt;li&gt;&lt;/li&gt;" });<br/>
+	<br/>
+	<dl>
+		<dt>dragSelector</dt>
+		<dd>The <a href="http://docs.jquery.com/Selectors">CSS selector</a> of the element inside the list to act as the drag handle. The default is LI.</dd>
+		<dt>dragEnd</dt>
+		<dd>The callback function that will be called after the dragging has ended.</dd>
+		<dt>dragBetween</dt>
+		<dd>Set to "true" if you want to enable the ability to drag between selected lists. The default is false.</dd>
+		<dt>placeHolderTemplate</dt>
+		<dd>The html of the place holder for the dragged item. The default is "&lt;li&gt;&lt;/li&gt;".</dd>
+	</dl>
 </body>
 </html>
