@@ -26,7 +26,7 @@
 				},
 
 				grabItem: function(e) {
-					if (e.button == 2 || e.target.tagName == "INPUT" || e.target.tagName == "A" && e.target.getAttribute("href") != null)
+					if (e.button == 2 || $(e.target).is(opts.dragSelectorExclude))
 						return;
 
 					var elm = e.target;
@@ -188,6 +188,7 @@
 	$.fn.dragsort.defaults = {
 		itemSelector: "li",
 		dragSelector: "li",
+		dragSelectorExclude: "input, a[href]",
 		dragEnd: function() { },
 		dragBetween: false,
 		placeHolderTemplate: "<li>&nbsp;</li>"
