@@ -10,6 +10,7 @@
 		var opts = $.extend({}, $.fn.dragsort.defaults, options);
 		var lists = new Array();
 		var list = null, lastPos = null;
+		$("head").append("<style type='text/css'>" + (this.selector.split(",").join(" " + opts.dragSelector + ",") + " " + opts.dragSelector) + " { cursor: pointer; }</style>");
 
 		this.each(function(i, cont) {
 
@@ -22,7 +23,7 @@
 				container: cont,
 
 				init: function() {
-					$(this.container).attr("listIdx", i).mousedown(this.grabItem).find(opts.dragSelector).css("cursor", "pointer");
+					$(this.container).attr("listIdx", i).mousedown(this.grabItem).find(opts.dragSelector);
 				},
 
 				grabItem: function(e) {
