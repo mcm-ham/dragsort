@@ -1,5 +1,5 @@
 /*
-	jQuery List DragSort v0.3.8
+	jQuery List DragSort v0.3.8+
 	Website: http://dragsort.codeplex.com/
 	License: http://dragsort.codeplex.com/license
 */
@@ -24,7 +24,7 @@
 				container: cont,
 
 				init: function() {
-					$(this.container).attr("listIdx", i).mousedown(this.grabItem).find(opts.dragSelector);
+					$(this.container).attr("listIdx", i).mousedown(this.grabItem).find(opts.dragSelector).css("cursor", "pointer");
 				},
 
 				grabItem: function(e) {
