@@ -1,5 +1,5 @@
 /*
-	jQuery List DragSort v0.3.8+
+	jQuery List DragSort v0.3.10 dev
 	Website: http://dragsort.codeplex.com/
 	License: http://dragsort.codeplex.com/license
 */
@@ -44,9 +44,11 @@
 
 					list = lists[$(this).attr("listIdx")];
 					list.draggedItem = $(elm).closest(opts.itemSelector);
+					var mt = parseInt(list.draggedItem.css("marginTop"));
+					var ml = parseInt(list.draggedItem.css("marginLeft"));
 					list.offset = list.draggedItem.offset();
-					list.offset.top = e.pageY - list.offset.top;
-					list.offset.left = e.pageX - list.offset.left;
+					list.offset.top = e.pageY - list.offset.top + (isNaN(mt) ? 0 : mt) - 1;
+					list.offset.left = e.pageX - list.offset.left + (isNaN(ml) ? 0 : ml) - 1;
 
 					if (!opts.dragBetween) {
 						var containerHeight = $(list.container).outerHeight() == 0 ? Math.max(1, Math.round(0.5 + $(list.container).children(opts.itemSelector).size() * list.draggedItem.outerWidth() / $(list.container).outerWidth())) * list.draggedItem.outerHeight() : $(list.container).outerHeight();
