@@ -57,7 +57,7 @@
 						list.offsetLimit.bottom = list.offsetLimit.top + containerHeight - list.draggedItem.outerHeight();
 					}
 
-					list.draggedItem.css({ position: "absolute", opacity: 0.8 }).after(opts.placeHolderTemplate);
+					list.draggedItem.css({ position: "absolute", opacity: 0.8, "z-index": 999 }).after(opts.placeHolderTemplate);
 					list.placeHolderItem = list.draggedItem.next().css("height", list.draggedItem.height()).attr("placeHolder", true);
 
 					$(lists).each(function(i, l) { l.ensureNotEmpty(); l.buildPositionTable(); });
@@ -112,7 +112,7 @@
 					$(list.container).find(opts.dragSelector).css("cursor", "pointer");
 					list.placeHolderItem.before(list.draggedItem);
 
-					list.draggedItem.css({ position: "", top: "", left: "", opacity: "" });
+					list.draggedItem.css({ position: "", top: "", left: "", opacity: "", "z-index": "" });
 					list.placeHolderItem.remove();
 
 					$("*[emptyPlaceHolder]").remove();
