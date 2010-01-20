@@ -18,11 +18,11 @@ public partial class example : System.Web.UI.Page
     }
 
     [WebMethod]
-    public static void SaveListOrder(string[] ids)
+    public static void SaveListOrder(int[] ids)
     {
         for (int i = 0; i < ids.Length; i++)
         {
-            int id = Convert.ToInt32(ids[i]);
+            int id = ids[i];
             int ordinal = i;
             //...
         }
