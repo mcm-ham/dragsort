@@ -15,6 +15,9 @@
 
 		this.each(function(i, cont) {
 
+			if ($(cont).is("table") && $(cont).children().size() == 1 && $(cont).children().is("tbody"))
+				cont = $(cont).children().get(0);
+
 			var newList = {
 				draggedItem: null,
 				placeHolderItem: null,
