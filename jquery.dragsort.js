@@ -1,5 +1,5 @@
 /*
-	jQuery List DragSort v0.3.10 dev
+	jQuery List DragSort v0.3.10
 	Website: http://dragsort.codeplex.com/
 	License: http://dragsort.codeplex.com/license
 */
@@ -195,7 +195,7 @@
 	$.fn.dragsort.defaults = {
 		itemSelector: "li",
 		dragSelector: "li",
-		dragSelectorExclude: "input, a[href]",
+		dragSelectorExclude: "input, textarea, a[href]",
 		dragEnd: function() { },
 		dragBetween: false,
 		placeHolderTemplate: "<li>&nbsp;</li>"
