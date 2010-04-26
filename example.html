@@ -72,9 +72,9 @@
 		$("#list1, #list2").dragsort({ dragSelector: "div", dragBetween: true, dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 		
 		function saveOrder() {
-			var serialStr = "";
-			$("#list1 li").each(function(i, elm) { serialStr += (i > 0 ? "|" : "") + $(elm).children().html(); });
-			$("input[name=list1SortOrder]").val(serialStr);
+			var data = new Array();
+			$("#list1 li").each(function(i, elm) { data[i] = $(elm).children().html(); });
+			$("input[name=list1SortOrder]").val(data.join("|"));
 		};
 	</script>
 	
