@@ -62,7 +62,8 @@
 
 					var h = list.draggedItem.height();
 					var w = list.draggedItem.width();
-					list.draggedItem.attr({ origH: list.draggedItem.css("height"), origW: list.draggedItem.css("width") }).after(opts.placeHolderTemplate);
+					var orig = list.draggedItem.attr("style");
+					list.draggedItem.attr("origStyle", orig ? orig : "").after(opts.placeHolderTemplate);
 					list.placeHolderItem = list.draggedItem.next().css({ height: h, width: w }).attr("placeHolder", true);
 					list.draggedItem.css({ position: "absolute", opacity: 0.8, "z-index": 999, height: h, width: w });
 
@@ -118,7 +119,7 @@
 					$(list.container).find(opts.dragSelector).css("cursor", "pointer");
 					list.placeHolderItem.before(list.draggedItem);
 
-					list.draggedItem.css({ position: "", top: "", left: "", opacity: "", "z-index": "", width: list.draggedItem.attr("origW"), height: list.draggedItem.attr("origH") });
+					list.draggedItem.attr("style", list.draggedItem.attr("origStyle")).removeAttr("origStyle");
 					list.placeHolderItem.remove();
 
 					$("*[emptyPlaceHolder]").remove();
