@@ -2,7 +2,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 	<style type="text/css">
 		body { font-family:Arial; font-size:12pt; padding:20px; width: 800px; margin:20px auto; border:solid 1px black; }
 		h1 { font-size:16pt; }
@@ -39,9 +39,8 @@
 		    $("#gallery").dragsort({ dragSelector: "div", dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 
 		    function saveOrder() {
-		        var data = new Array();
-		        $("#gallery li").each(function(i, elm) { data[i] = $(elm).attr("itemID"); });
-				$.ajax({ url: "example.aspx/SaveListOrder", data: '{ids:[' + data.join(',') + ']}', dataType: "json", type: "POST", contentType: "application/json; charset=utf-8" });
+				var data = $("#gallery li").map(function() { return $(this).attr("itemID"); }).get();
+				$.ajax({ url: "example.aspx/SaveListOrder", data: '{ids:["' + data.join('","') + '"]}', dataType: "json", type: "POST", contentType: "application/json; charset=utf-8" });
 		    };
 	    </script>
         

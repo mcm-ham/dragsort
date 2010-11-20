@@ -1,14 +1,12 @@
-/*
-	jQuery List DragSort v0.3.10
-	Website: http://dragsort.codeplex.com/
-	License: http://dragsort.codeplex.com/license
-*/
+// jQuery List DragSort v0.4
+// Website: http://dragsort.codeplex.com/
+// License: http://dragsort.codeplex.com/license
 
 (function($) {
 
 	$.fn.dragsort = function(options) {
 		var opts = $.extend({}, $.fn.dragsort.defaults, options);
-		var lists = new Array();
+		var lists = [];
 		var list = null, lastPos = null;
 		if (this.selector)
 			$("head").append("<style type='text/css'>" + (this.selector.split(",").join(" " + opts.dragSelector + ",") + " " + opts.dragSelector) + " { cursor: pointer; }</style>");
@@ -24,18 +22,20 @@
 				pos: null,
 				offset: null,
 				offsetLimit: null,
+				scroll: null,
 				container: cont,
 
 				init: function() {
-					$(this.container).attr("listIdx", i).mousedown(this.grabItem).find(opts.dragSelector).css("cursor", "pointer");
+					$(this.container).attr("data-listIdx", i).mousedown(this.grabItem).find(opts.dragSelector).css("cursor", "pointer");
+					$(this.container).children(opts.itemSelector).each(function(j) { $(this).attr("data-itemIdx", j); });
 				},
 
 				grabItem: function(e) {
-					if (e.button == 2 || $(e.target).is(opts.dragSelectorExclude))
+					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude))
 						return;
 
 					var elm = e.target;
-					while (!$(elm).is("[listIdx=" + $(this).attr("listIdx") + "] " + opts.dragSelector)) {
+					while (!$(elm).is("[data-listIdx='" + $(this).attr("data-listIdx") + "'] " + opts.dragSelector)) {
 						if (elm == this) return;
 						elm = elm.parentNode;
 					}
@@ -45,7 +45,7 @@
 
 					$(e.target).css("cursor", "move");
 
-					list = lists[$(this).attr("listIdx")];
+					list = lists[$(this).attr("data-listIdx")];
 					list.draggedItem = $(elm).closest(opts.itemSelector);
 					var mt = parseInt(list.draggedItem.css("marginTop"));
 					var ml = parseInt(list.draggedItem.css("marginLeft"));
@@ -62,16 +62,51 @@
 
 					var h = list.draggedItem.height();
 					var w = list.draggedItem.width();
-					list.draggedItem.attr({ origH: list.draggedItem.css("height"), origW: list.draggedItem.css("width") }).after(opts.placeHolderTemplate);
-					list.placeHolderItem = list.draggedItem.next().css({ height: h, width: w }).attr("placeHolder", true);
-					list.draggedItem.addClass("dragSortItem").css({ position: "absolute", opacity: 0.8, "z-index": 999, height: h, width: w });
+					var orig = list.draggedItem.attr("style");
+					list.draggedItem.attr("data-origStyle", orig ? orig : "");
+					if (opts.itemSelector == "tr") {
+						list.draggedItem.children().each(function() { $(this).width($(this).width()); });
+						list.placeHolderItem = list.draggedItem.clone().attr("data-placeHolder", true);
+						list.draggedItem.after(list.placeHolderItem);
+						list.placeHolderItem.children().each(function() { $(this).css({ borderWidth:0, width: $(this).width() + 1, height: $(this).height() + 1 }).html("&nbsp;"); });
+					} else {
+						list.draggedItem.after(opts.placeHolderTemplate);
+						list.placeHolderItem = list.draggedItem.next().css({ height: h, width: w }).attr("data-placeHolder", true);
+					}
+					list.draggedItem.css({ position: "absolute", opacity: 0.8, "z-index": 999, height: h, width: w });
 
-					$(lists).each(function(i, l) { l.ensureNotEmpty(); l.buildPositionTable(); });
+					$(lists).each(function(i, l) { l.createDropTargets(); l.buildPositionTable(); });
+
+					list.scroll = { moveX: 0, moveY: 0, maxX: $(document).width() - $(window).width(), maxY: $(document).height() - $(window).height() };
+					list.scroll.scrollY = window.setInterval(function() {
+						if (opts.scrollContainer != window) {
+							$(opts.scrollContainer).scrollTop($(opts.scrollContainer).scrollTop() + list.scroll.moveY);
+							return;
+						}
+						var t = $(opts.scrollContainer).scrollTop();
+						if (list.scroll.moveY > 0 && t < list.scroll.maxY || list.scroll.moveY < 0 && t > 0) {
+							$(opts.scrollContainer).scrollTop(t + list.scroll.moveY);
+							list.draggedItem.css("top", list.draggedItem.offset().top + list.scroll.moveY + 1);
+						}
+					}, 10);
+					list.scroll.scrollX = window.setInterval(function() {
+						if (opts.scrollContainer != window) {
+							$(opts.scrollContainer).scrollLeft($(opts.scrollContainer).scrollLeft() + list.scroll.moveX);
+							return;
+						}
+						var l = $(opts.scrollContainer).scrollLeft();
+						if (list.scroll.moveX > 0 && l < list.scroll.maxX || list.scroll.moveX < 0 && l > 0) {
+							$(opts.scrollContainer).scrollLeft(l + list.scroll.moveX);
+							list.draggedItem.css("left", list.draggedItem.offset().left + list.scroll.moveX + 1);
+						}
+					}, 10);
 
 					list.setPos(e.pageX, e.pageY);
 					$(document).bind("selectstart", list.stopBubble); //stop ie text selection
 					$(document).bind("mousemove", list.swapItems);
 					$(document).bind("mouseup", list.dropItem);
+					if (opts.scrollContainer != window)
+						$(window).bind("DOMMouseScroll mousewheel", list.wheel);
 					return false; //stop moz text selection
 				},
 
@@ -93,12 +128,39 @@
 						}
 					});
 
+					if (opts.scrollContainer == window) {
+						y -= $(window).scrollTop();
+						x -= $(window).scrollLeft();
+						y = Math.max(0, y - $(window).height() + 5) + Math.min(0, y - 5);
+						x = Math.max(0, x - $(window).width() + 5) + Math.min(0, x - 5);
+					} else {
+						var cont = $(opts.scrollContainer);
+						var offset = cont.offset();
+						y = Math.max(0, y - cont.height() - offset.top) + Math.min(0, y - offset.top);
+						x = Math.max(0, x - cont.width() - offset.left) + Math.min(0, x - offset.left);
+					}
+					
+					list.scroll.moveX = x == 0 ? 0 : x * opts.scrollSpeed / Math.abs(x);
+					list.scroll.moveY = y == 0 ? 0 : y * opts.scrollSpeed / Math.abs(y);
+
 					this.draggedItem.css({ top: top, left: left });
+				},
+				
+				wheel: function(e) {
+					if (($.browser.safari || $.browser.mozilla) && list && opts.scrollContainer != window) {
+						var cont = $(opts.scrollContainer);
+						var offset = cont.offset();
+						if (e.pageX > offset.left && e.pageX < offset.left + cont.width() && e.pageY > offset.top && e.pageY < offset.top + cont.height()) {
+							var delta = e.detail ? e.detail * 5 : e.wheelDelta / -2;
+							cont.scrollTop(cont.scrollTop() + delta);
+							e.preventDefault();
+						}
+					}
 				},
 
 				buildPositionTable: function() {
 					var item = this.draggedItem == null ? null : this.draggedItem.get(0);
-					var pos = new Array();
+					var pos = [];
 					$(this.container).children(opts.itemSelector).each(function(i, elm) {
 						if (elm != item) {
 							var loc = $(elm).offset();
@@ -118,16 +180,31 @@
 					$(list.container).find(opts.dragSelector).css("cursor", "pointer");
 					list.placeHolderItem.before(list.draggedItem);
 
-					list.draggedItem.removeClass("dragSortItem").css({ position: "", top: "", left: "", opacity: "", "z-index": "", width: list.draggedItem.attr("origW"), height: list.draggedItem.attr("origH") });
+					list.draggedItem.attr("style", list.draggedItem.attr("data-origStyle")).removeAttr("data-origStyle");
 					list.placeHolderItem.remove();
 
-					$("*[emptyPlaceHolder]").remove();
+					$("[data-dropTarget]").remove();
 
-					opts.dragEnd.apply(list.draggedItem);
+					window.clearInterval(list.scroll.scrollY);
+					window.clearInterval(list.scroll.scrollX);
+
+					var changed = false;
+					$(lists).each(function() {
+						$(this.container).children(opts.itemSelector).each(function(j) {
+							if (parseInt($(this).attr("data-itemIdx")) != j) {
+								changed = true;
+								$(this).attr("data-itemIdx", j);
+							}
+						});
+					});
+					if (changed)
+						opts.dragEnd.apply(list.draggedItem);
 					list.draggedItem = null;
 					$(document).unbind("selectstart", list.stopBubble);
 					$(document).unbind("mousemove", list.swapItems);
 					$(document).unbind("mouseup", list.dropItem);
+					if (opts.scrollContainer != window)
+						$(window).unbind("DOMMouseScroll mousewheel", list.wheel);
 					return false;
 				},
 
@@ -146,7 +223,7 @@
 						nlist = lists[i];
 					}
 
-					if (ei == -1 || $(nlist.pos[ei].elm).attr("placeHolder"))
+					if (ei == -1 || $(nlist.pos[ei].elm).attr("data-placeHolder"))
 						return false;
 
 					if (lastPos == null || lastPos.top > list.draggedItem.offset().top || lastPos.left > list.draggedItem.offset().left)
@@ -154,7 +231,7 @@
 					else
 						$(nlist.pos[ei].elm).after(list.placeHolderItem);
 
-					$(lists).each(function(i, l) { l.ensureNotEmpty(); l.buildPositionTable(); });
+					$(lists).each(function(i, l) { l.createDropTargets(); l.buildPositionTable(); });
 					lastPos = list.draggedItem.offset();
 					return false;
 				},
@@ -167,24 +244,18 @@
 					return -1;
 				},
 
-				ensureNotEmpty: function() {
+				createDropTargets: function() {
 					if (!opts.dragBetween)
 						return;
 
-					var item = this.draggedItem == null ? null : this.draggedItem.get(0);
-					var emptyPH = null, empty = true;
-
-					$(this.container).children(opts.itemSelector).each(function(i, elm) {
-						if ($(elm).attr("emptyPlaceHolder"))
-							emptyPH = elm;
-						else if (elm != item)
-							empty = false;
+					$(lists).each(function() {
+						var ph = $(this.container).find("[data-placeHolder]");
+						var dt = $(this.container).find("[data-dropTarget]");
+						if (ph.size() > 0 && dt.size() > 0)
+							dt.remove();
+						else if (ph.size() == 0 && dt.size() == 0)
+							$(this.container).append(list.placeHolderItem.clone().removeAttr("data-placeHolder").attr("data-dropTarget", true));
 					});
-
-					if (empty && emptyPH == null)
-						$(this.container).append(opts.placeHolderTemplate).children(":last").attr("emptyPlaceHolder", true);
-					else if (!empty && emptyPH != null)
-						$(emptyPH).remove();
 				}
 			};
 
@@ -201,7 +272,9 @@
 		dragSelectorExclude: "input, textarea, a[href]",
 		dragEnd: function() { },
 		dragBetween: false,
-		placeHolderTemplate: "<li>&nbsp;</li>"
+		placeHolderTemplate: "<li>&nbsp;</li>",
+		scrollContainer: window,
+		scrollSpeed: 5
 	};
 
 })(jQuery);

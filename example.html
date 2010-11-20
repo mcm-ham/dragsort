@@ -2,7 +2,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 	<script type="text/javascript" src="jquery.dragsort.js"></script>
 	<style type="text/css">
 		body { font-family:Arial; font-size:12pt; padding:20px; width:800px; margin:20px auto; border:solid 1px black; }
@@ -14,6 +14,8 @@
 		#list1 div, #list2 div { width:90px; height:50px; border:solid 1px black; background-color:#E0E0E0; text-align:center; padding-top:40px; }
 		#list2 { float:right; }
 		.placeHolder div { background-color:white !important; border:dashed 1px gray !important; }
+		table { float:right; border-collapse:collapse; }
+		td { border: 1px solid gray; padding:5px; }
 	</style>
 </head>
 <body>
@@ -22,7 +24,7 @@
 	
 	<a href="http://dragsort.codeplex.com/">Homepage</a><br/>
 	<br/>
-	
+
 	<h2>Simple 1D list:</h2>
 	
 	<ul>
@@ -33,12 +35,12 @@
 		<li>butter</li>
 		<li>ice cream</li>
 	</ul>
+	<br/>
 	
 	<script type="text/javascript">
 		$("ul:first").dragsort();
 	</script>
 	
-	<br/>
 	<h2>2D list with drag and drop between lists:</h2>
 	
 	<ul id="list2">
@@ -67,31 +69,36 @@
 	
 	<!-- save sort order here which can be retrieved on server on postback -->
 	<input name="list1SortOrder" type="hidden" />
-	
+
 	<script type="text/javascript">
 		$("#list1, #list2").dragsort({ dragSelector: "div", dragBetween: true, dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 		
 		function saveOrder() {
-			var data = new Array();
-			$("#list1 li").each(function(i, elm) { data[i] = $(elm).children().html(); });
+			var data = $("#list1 li").map(function() { return $(this).children().html(); }).get();
 			$("input[name=list1SortOrder]").val(data.join("|"));
 		};
 	</script>
-	
+
 	<div style="clear:both;"></div>
-	
+
 	<h2>Usage</h2>
 	$("ul").dragsort({ dragSelector: "li", dragEnd: function() { }, dragBetween: false, placeHolderTemplate: "&lt;li&gt;&lt;/li&gt;" });<br/>
 	<br/>
 	<dl>
 		<dt>dragSelector</dt>
-		<dd>The <a href="http://docs.jquery.com/Selectors">CSS selector</a> of the element inside the list to act as the drag handle. The default is LI.</dd>
+		<dd>The <a href="http://docs.jquery.com/Selectors">CSS selector</a> of the element inside the list item to act as the drag handle. The default is LI.</dd>
+		<dt>dragSelectorExclude</dt>
+		<dd>The css selector of the elements inside the dragSelector to not trigger dragsort. The default is "input, textarea, a[href]".</dd>
 		<dt>dragEnd</dt>
 		<dd>The callback function that will be called after the dragging has ended.</dd>
 		<dt>dragBetween</dt>
 		<dd>Set to "true" if you want to enable the ability to drag between selected lists. The default is false.</dd>
 		<dt>placeHolderTemplate</dt>
 		<dd>The html of the place holder for the dragged item. The default is "&lt;li&gt;&lt;/li&gt;".</dd>
+		<dt>scrollContainer</dt>
+		<dd>The css selector of the element that is to act as the scroll container e.g. a div with overflow set to auto. The default is window.</dd>
+		<dt>scrollSpeed</dt>
+		<dd>A number that represents the speed that the page will scroll when dragging an item outside the scroll container, a higher value is faster and a lower value is slower. Set to 0 to disable scrolling. The default is 5.</dd>
 	</dl>
 </body>
 </html>
