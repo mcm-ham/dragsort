@@ -180,7 +180,12 @@
 					$(list.container).find(opts.dragSelector).css("cursor", "pointer");
 					list.placeHolderItem.before(list.draggedItem);
 
-					list.draggedItem.attr("style", list.draggedItem.attr("data-origStyle")).removeAttr("data-origStyle");
+					var orig = list.draggedItem.attr("data-origStyle");
+					if (orig == "")
+						list.draggedItem.removeAttr("style");
+					else
+						list.draggedItem.attr("style", orig);
+					list.removeAttr("data-origStyle");
 					list.placeHolderItem.remove();
 
 					$("[data-dropTarget]").remove();
