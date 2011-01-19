@@ -183,9 +183,10 @@
 					var orig = list.draggedItem.attr("data-origStyle");
 					if (orig == "")
 						list.draggedItem.removeAttr("style");
-					else
+					else {
 						list.draggedItem.attr("style", orig);
-					list.removeAttr("data-origStyle");
+						list.removeAttr("data-origStyle");
+					}
 					list.placeHolderItem.remove();
 
 					$("[data-dropTarget]").remove();
