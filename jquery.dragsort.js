@@ -183,10 +183,9 @@
 					var orig = list.draggedItem.attr("data-origStyle");
 					if (orig == "")
 						list.draggedItem.removeAttr("style");
-					else {
+					else
 						list.draggedItem.attr("style", orig);
-						list.removeAttr("data-origStyle");
-					}
+					list.draggedItem.removeAttr("data-origStyle");
 					list.placeHolderItem.remove();
 
 					$("[data-dropTarget]").remove();
@@ -259,8 +258,11 @@
 						var dt = $(this.container).find("[data-dropTarget]");
 						if (ph.size() > 0 && dt.size() > 0)
 							dt.remove();
-						else if (ph.size() == 0 && dt.size() == 0)
-							$(this.container).append(list.placeHolderItem.clone().removeAttr("data-placeHolder").attr("data-dropTarget", true));
+						else if (ph.size() == 0 && dt.size() == 0) {
+							//list.placeHolderItem.clone().removeAttr("data-placeHolder") crashes in IE7 and jquery 1.5.1 (doesn't in jquery 1.4.2 or IE8)
+							$(this.container).append(list.placeHolderItem.removeAttr("data-placeHolder").clone().attr("data-dropTarget", true));
+							list.placeHolderItem.attr("data-placeHolder", true);
+						}
 					});
 				}
 			};

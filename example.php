@@ -13,7 +13,6 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 	<style type="text/css">
 		body { font-family:Arial; font-size:12pt; padding:20px; width: 800px; margin:20px auto; border:solid 1px black; }
 		h1 { font-size:16pt; }
@@ -26,8 +25,9 @@
 </head>
 <body>
     <div>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
         
-        <h1>jQuery List DragSort PHP Example</h1>
+		<h1>jQuery List DragSort PHP Example</h1>
 	    
 	    <a href="http://dragsort.codeplex.com/">Homepage</a><br/>
 	    <br/>
