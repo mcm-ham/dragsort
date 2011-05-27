@@ -25,7 +25,7 @@
 </head>
 <body>
     <div>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
         
 		<h1>jQuery List DragSort PHP Example</h1>
 	    
