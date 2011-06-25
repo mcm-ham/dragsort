@@ -180,11 +180,12 @@
 					$(list.container).find(opts.dragSelector).css("cursor", "pointer");
 					list.placeHolderItem.before(list.draggedItem);
 
+					//list.draggedItem.attr("style", "") doesn't work on IE8 and jQuery 1.5 or lower
+					//list.draggedItem.removeAttr("style") doesn't work on chrome and jQuery 1.6 (works jQuery 1.5 or lower)
 					var orig = list.draggedItem.attr("data-origStyle");
+					list.draggedItem.attr("style", orig);
 					if (orig == "")
 						list.draggedItem.removeAttr("style");
-					else
-						list.draggedItem.attr("style", orig);
 					list.draggedItem.removeAttr("data-origStyle");
 					list.placeHolderItem.remove();
 
