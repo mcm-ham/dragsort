@@ -203,6 +203,10 @@
 					var changed = false;
 					$(lists).each(function() {
 						$(this.container).children(opts.itemSelector).each(function(j) {
+							if (parseInt($(this).attr("data-parentIdx")) != i) {
+								changed = true;
+								$(this).attr("data-parentIdx", i);
+							}
 							if (parseInt($(this).attr("data-itemIdx")) != j) {
 								changed = true;
 								$(this).attr("data-itemIdx", j);
