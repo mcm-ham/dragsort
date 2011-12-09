@@ -1,4 +1,4 @@
-// jQuery List DragSort v0.4
+// jQuery List DragSort v0.4.4 dev
 // Website: http://dragsort.codeplex.com/
 // License: http://dragsort.codeplex.com/license
 
@@ -64,7 +64,10 @@
 					var w = list.draggedItem.width();
 					var orig = list.draggedItem.attr("style");
 					list.draggedItem.attr("data-origStyle", orig ? orig : "");
-					if (opts.itemSelector == "tr") {
+					if (opts.itemSelector == "td") {
+						list.placeHolderItem = list.draggedItem.attr("data-placeHolder", true);
+					}
+					else if (opts.itemSelector == "tr") {
 						list.draggedItem.children().each(function() { $(this).width($(this).width()); });
 						list.placeHolderItem = list.draggedItem.clone().attr("data-placeHolder", true);
 						list.draggedItem.after(list.placeHolderItem);
@@ -178,7 +181,6 @@
 						return;
 
 					$(list.container).find(opts.dragSelector).css("cursor", "pointer");
-					list.placeHolderItem.before(list.draggedItem);
 
 					//list.draggedItem.attr("style", "") doesn't work on IE8 and jQuery 1.5 or lower
 					//list.draggedItem.removeAttr("style") doesn't work on chrome and jQuery 1.6 (works jQuery 1.5 or lower)
@@ -187,7 +189,11 @@
 					if (orig == "")
 						list.draggedItem.removeAttr("style");
 					list.draggedItem.removeAttr("data-origStyle");
-					list.placeHolderItem.remove();
+					
+					if (opts.itemSelector != "td") {
+						list.placeHolderItem.before(list.draggedItem);
+						list.placeHolderItem.remove();
+					}
 
 					$("[data-dropTarget]").remove();
 
@@ -260,8 +266,12 @@
 						if (ph.size() > 0 && dt.size() > 0)
 							dt.remove();
 						else if (ph.size() == 0 && dt.size() == 0) {
-							//list.placeHolderItem.clone().removeAttr("data-placeHolder") crashes in IE7 and jquery 1.5.1 (doesn't in jquery 1.4.2 or IE8)
-							$(this.container).append(list.placeHolderItem.removeAttr("data-placeHolder").clone().attr("data-dropTarget", true));
+							if (opts.itemSelector == "td")
+								$(opts.placeHolderTemplate).attr("data-dropTarget", true).appendTo(this.container);
+							else
+								//list.placeHolderItem.clone().removeAttr("data-placeHolder") crashes in IE7 and jquery 1.5.1 (doesn't in jquery 1.4.2 or IE8)
+								$(this.container).append(list.placeHolderItem.removeAttr("data-placeHolder").clone().attr("data-dropTarget", true));
+							
 							list.placeHolderItem.attr("data-placeHolder", true);
 						}
 					});

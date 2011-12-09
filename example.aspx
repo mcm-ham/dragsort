@@ -13,8 +13,8 @@
 	</style>
 </head>
 <body>
-    <script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.1.min.js"></script>
-	<% /* %><script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.1-vsdoc.js"></script><% */ %>
+    <script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
+	<% /* %><script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1-vsdoc.js"></script><% */ %>
 	<form id="form1" runat="server">
     <div>
         
