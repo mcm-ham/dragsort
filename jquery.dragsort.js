@@ -1,15 +1,17 @@
-// jQuery List DragSort v0.4.4 dev
+// jQuery List DragSort v0.5
 // Website: http://dragsort.codeplex.com/
 // License: http://dragsort.codeplex.com/license
 
 (function($) {
 
 	$.fn.dragsort = function(options) {
+		if (options == "destroy") {
+			$(this.selector).trigger("dragsort-uninit");
+			return;
+		}
 		var opts = $.extend({}, $.fn.dragsort.defaults, options);
 		var lists = [];
 		var list = null, lastPos = null;
-		if (this.selector)
-			$("head").append("<style type='text/css'>" + (this.selector.split(",").join(" " + opts.dragSelector + ",") + " " + opts.dragSelector) + " { cursor: pointer; }</style>");
 
 		this.each(function(i, cont) {
 
@@ -26,16 +28,34 @@
 				container: cont,
 
 				init: function() {
-					$(this.container).attr("data-listIdx", i).mousedown(this.grabItem).find(opts.dragSelector).css("cursor", "pointer");
-					$(this.container).children(opts.itemSelector).each(function(j) { $(this).attr("data-itemIdx", j); });
+					$(this.container).attr("data-listidx", i).mousedown(this.grabItem).bind("dragsort-uninit", this.uninit);
+					this.getItems().each(function(j) { $(this).attr("data-itemidx", j); });
+					this.styleDragHandlers(true);
+				},
+
+				uninit: function() {
+					var list = lists[$(this).attr("data-listidx")];
+					$(list.container).unbind("mousedown", list.grabItem).unbind("dragsort-uninit");
+					list.styleDragHandlers(false);
+				},
+
+				getItems: function() {
+					return $(this.container).children(opts.itemSelector).not(opts.itemSelectorExclude);
+				},
+				
+				styleDragHandlers: function(cursor) {
+					if (opts.itemSelector == opts.dragSelector)
+						this.getItems().css("cursor", cursor ? "pointer" : "");
+					else
+						this.getItems().find(opts.dragSelector).css("cursor", cursor ? "pointer" : "");
 				},
 
 				grabItem: function(e) {
-					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude))
+					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).is(opts.itemSelectorExclude + " *"))
 						return;
 
 					var elm = e.target;
-					while (!$(elm).is("[data-listIdx='" + $(this).attr("data-listIdx") + "'] " + opts.dragSelector)) {
+					while (!$(elm).is("[data-listidx='" + $(this).attr("data-listidx") + "'] " + opts.dragSelector)) {
 						if (elm == this) return;
 						elm = elm.parentNode;
 					}
@@ -45,7 +65,7 @@
 
 					$(e.target).css("cursor", "move");
 
-					list = lists[$(this).attr("data-listIdx")];
+					list = lists[$(this).attr("data-listidx")];
 					list.draggedItem = $(elm).closest(opts.itemSelector);
 					var mt = parseInt(list.draggedItem.css("marginTop"));
 					var ml = parseInt(list.draggedItem.css("marginLeft"));
@@ -54,7 +74,7 @@
 					list.offset.left = e.pageX - list.offset.left + (isNaN(ml) ? 0 : ml) - 1;
 
 					if (!opts.dragBetween) {
-						var containerHeight = $(list.container).outerHeight() == 0 ? Math.max(1, Math.round(0.5 + $(list.container).children(opts.itemSelector).size() * list.draggedItem.outerWidth() / $(list.container).outerWidth())) * list.draggedItem.outerHeight() : $(list.container).outerHeight();
+						var containerHeight = $(list.container).outerHeight() == 0 ? Math.max(1, Math.round(0.5 + list.getItems().size() * list.draggedItem.outerWidth() / $(list.container).outerWidth())) * list.draggedItem.outerHeight() : $(list.container).outerHeight();
 						list.offsetLimit = $(list.container).offset();
 						list.offsetLimit.right = list.offsetLimit.left + $(list.container).outerWidth() - list.draggedItem.outerWidth();
 						list.offsetLimit.bottom = list.offsetLimit.top + containerHeight - list.draggedItem.outerHeight();
@@ -63,18 +83,18 @@
 					var h = list.draggedItem.height();
 					var w = list.draggedItem.width();
 					var orig = list.draggedItem.attr("style");
-					list.draggedItem.attr("data-origStyle", orig ? orig : "");
+					list.draggedItem.attr("data-origstyle", orig ? orig : "");
 					if (opts.itemSelector == "td") {
-						list.placeHolderItem = list.draggedItem.attr("data-placeHolder", true);
+						list.placeHolderItem = list.draggedItem.attr("data-placeholder", true);
 					}
 					else if (opts.itemSelector == "tr") {
 						list.draggedItem.children().each(function() { $(this).width($(this).width()); });
-						list.placeHolderItem = list.draggedItem.clone().attr("data-placeHolder", true);
+						list.placeHolderItem = list.draggedItem.clone().attr("data-placeholder", true);
 						list.draggedItem.after(list.placeHolderItem);
 						list.placeHolderItem.children().each(function() { $(this).css({ borderWidth:0, width: $(this).width() + 1, height: $(this).height() + 1 }).html("&nbsp;"); });
 					} else {
 						list.draggedItem.after(opts.placeHolderTemplate);
-						list.placeHolderItem = list.draggedItem.next().css({ height: h, width: w }).attr("data-placeHolder", true);
+						list.placeHolderItem = list.draggedItem.next().css({ height: h, width: w }).attr("data-placeholder", true);
 					}
 					list.draggedItem.css({ position: "absolute", opacity: 0.8, "z-index": 999, height: h, width: w });
 
@@ -164,7 +184,7 @@
 				buildPositionTable: function() {
 					var item = this.draggedItem == null ? null : this.draggedItem.get(0);
 					var pos = [];
-					$(this.container).children(opts.itemSelector).each(function(i, elm) {
+					this.getItems().each(function(i, elm) {
 						if (elm != item) {
 							var loc = $(elm).offset();
 							loc.right = loc.left + $(elm).width();
@@ -180,36 +200,36 @@
 					if (list.draggedItem == null)
 						return;
 
-					$(list.container).find(opts.dragSelector).css("cursor", "pointer");
+					list.styleDragHandlers(true);
 
 					//list.draggedItem.attr("style", "") doesn't work on IE8 and jQuery 1.5 or lower
 					//list.draggedItem.removeAttr("style") doesn't work on chrome and jQuery 1.6 (works jQuery 1.5 or lower)
-					var orig = list.draggedItem.attr("data-origStyle");
+					var orig = list.draggedItem.attr("data-origstyle");
 					list.draggedItem.attr("style", orig);
 					if (orig == "")
 						list.draggedItem.removeAttr("style");
-					list.draggedItem.removeAttr("data-origStyle");
+					list.draggedItem.removeAttr("data-origstyle");
 					
 					if (opts.itemSelector != "td") {
 						list.placeHolderItem.before(list.draggedItem);
 						list.placeHolderItem.remove();
 					}
 
-					$("[data-dropTarget]").remove();
+					$("[data-droptarget]").remove();
 
 					window.clearInterval(list.scroll.scrollY);
 					window.clearInterval(list.scroll.scrollX);
 
 					var changed = false;
 					$(lists).each(function() {
-						$(this.container).children(opts.itemSelector).each(function(j) {
-							if (parseInt($(this).attr("data-parentIdx")) != i) {
+						this.getItems().each(function(j) {
+							if (parseInt($(this).attr("data-parentidx")) != i) {
 								changed = true;
-								$(this).attr("data-parentIdx", i);
+								$(this).attr("data-parentidx", i);
 							}
-							if (parseInt($(this).attr("data-itemIdx")) != j) {
+							if (parseInt($(this).attr("data-itemidx")) != j) {
 								changed = true;
-								$(this).attr("data-itemIdx", j);
+								$(this).attr("data-itemidx", j);
 							}
 						});
 					});
@@ -239,13 +259,24 @@
 						nlist = lists[i];
 					}
 
-					if (ei == -1 || $(nlist.pos[ei].elm).attr("data-placeHolder"))
+					if (ei == -1 || $(nlist.pos[ei].elm).attr("data-placeholder"))
 						return false;
+
+					var children = function() { return $(nlist.container).children().not(nlist.draggedItem); };
+					var fixed = children().filter(opts.itemSelectorExclude).each(function(i) { this.idx = children().index(this); });
 
 					if (lastPos == null || lastPos.top > list.draggedItem.offset().top || lastPos.left > list.draggedItem.offset().left)
 						$(nlist.pos[ei].elm).before(list.placeHolderItem);
 					else
 						$(nlist.pos[ei].elm).after(list.placeHolderItem);
+						
+					fixed.each(function() {
+						var elm = children().eq(this.idx).get(0);
+						if (this != elm && children().index(this) < this.idx)
+							$(this).insertAfter(elm);
+						else if (this != elm)
+							$(this).insertBefore(elm);
+					});
 
 					$(lists).each(function(i, l) { l.createDropTargets(); l.buildPositionTable(); });
 					lastPos = list.draggedItem.offset();
@@ -265,18 +296,18 @@
 						return;
 
 					$(lists).each(function() {
-						var ph = $(this.container).find("[data-placeHolder]");
-						var dt = $(this.container).find("[data-dropTarget]");
+						var ph = $(this.container).find("[data-placeholder]");
+						var dt = $(this.container).find("[data-droptarget]");
 						if (ph.size() > 0 && dt.size() > 0)
 							dt.remove();
 						else if (ph.size() == 0 && dt.size() == 0) {
 							if (opts.itemSelector == "td")
-								$(opts.placeHolderTemplate).attr("data-dropTarget", true).appendTo(this.container);
+								$(opts.placeHolderTemplate).attr("data-droptarget", true).appendTo(this.container);
 							else
-								//list.placeHolderItem.clone().removeAttr("data-placeHolder") crashes in IE7 and jquery 1.5.1 (doesn't in jquery 1.4.2 or IE8)
-								$(this.container).append(list.placeHolderItem.removeAttr("data-placeHolder").clone().attr("data-dropTarget", true));
+								//list.placeHolderItem.clone().removeAttr("data-placeholder") crashes in IE7 and jquery 1.5.1 (doesn't in jquery 1.4.2 or IE8)
+								$(this.container).append(list.placeHolderItem.removeAttr("data-placeholder").clone().attr("data-droptarget", true));
 							
-							list.placeHolderItem.attr("data-placeHolder", true);
+							list.placeHolderItem.attr("data-placeholder", true);
 						}
 					});
 				}
@@ -291,6 +322,7 @@
 
 	$.fn.dragsort.defaults = {
 		itemSelector: "li",
+		itemSelectorExclude: "",
 		dragSelector: "li",
 		dragSelectorExclude: "input, textarea, a[href]",
 		dragEnd: function() { },
