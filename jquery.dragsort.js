@@ -42,7 +42,7 @@
 				getItems: function() {
 					return $(this.container).children(opts.itemSelector).not(opts.itemSelectorExclude);
 				},
-				
+
 				styleDragHandlers: function(cursor) {
 					if (opts.itemSelector == opts.dragSelector)
 						this.getItems().css("cursor", cursor ? "pointer" : "");
