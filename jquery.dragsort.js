@@ -51,7 +51,7 @@
 				},
 
 				grabItem: function(e) {
-					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).is(opts.itemSelectorExclude + " *"))
+					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.dragSelectorExclude).size() > 0 || $(e.target).closest(opts.itemSelectorExclude).size() > 0)
 						return;
 
 					var elm = e.target;
