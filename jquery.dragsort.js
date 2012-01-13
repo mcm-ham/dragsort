@@ -28,6 +28,14 @@
 				container: cont,
 
 				init: function() {
+					var tagName = $(this.container).children(":first").get(0).tagName.toLowerCase();
+					if (opts.itemSelector == "")
+						opts.itemSelector = tagName;
+					if (opts.dragSelector == "")
+						opts.dragSelector = tagName;
+					if (opts.placeHolderTemplate == "")
+						opts.placeHolderTemplate = "<" + tagName + ">&nbsp;</" + tagName + ">";
+
 					$(this.container).attr("data-listidx", i).mousedown(this.grabItem).bind("dragsort-uninit", this.uninit);
 					this.getItems().each(function(j) { $(this).attr("data-itemidx", j); });
 					this.styleDragHandlers(true);
@@ -40,18 +48,15 @@
 				},
 
 				getItems: function() {
-					return $(this.container).children(opts.itemSelector).not(opts.itemSelectorExclude);
+					return $(this.container).children(opts.itemSelector);
 				},
 
 				styleDragHandlers: function(cursor) {
-					if (opts.itemSelector == opts.dragSelector)
-						this.getItems().css("cursor", cursor ? "pointer" : "");
-					else
-						this.getItems().find(opts.dragSelector).css("cursor", cursor ? "pointer" : "");
+					this.getItems().map(function() { return $(this).is(opts.dragSelector) ? this : $(this).find(opts.dragSelector).get(); }).css("cursor", cursor ? "pointer" : "");
 				},
 
 				grabItem: function(e) {
-					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.dragSelectorExclude).size() > 0 || $(e.target).closest(opts.itemSelectorExclude).size() > 0)
+					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.dragSelectorExclude).size() > 0 || $(e.target).closest(opts.itemSelector).size() == 0)
 						return;
 
 					var elm = e.target;
@@ -63,7 +68,7 @@
 					if (list != null && list.draggedItem != null)
 						list.dropItem();
 
-					$(e.target).css("cursor", "move");
+					$(elm).css("cursor", "move");
 
 					list = lists[$(this).attr("data-listidx")];
 					list.draggedItem = $(elm).closest(opts.itemSelector);
@@ -200,8 +205,6 @@
 					if (list.draggedItem == null)
 						return;
 
-					list.styleDragHandlers(true);
-
 					//list.draggedItem.attr("style", "") doesn't work on IE8 and jQuery 1.5 or lower
 					//list.draggedItem.removeAttr("style") doesn't work on chrome and jQuery 1.6 (works jQuery 1.5 or lower)
 					var orig = list.draggedItem.attr("data-origstyle");
@@ -209,7 +212,9 @@
 					if (orig == "")
 						list.draggedItem.removeAttr("style");
 					list.draggedItem.removeAttr("data-origstyle");
-					
+
+					list.styleDragHandlers(true);
+
 					if (opts.itemSelector != "td") {
 						list.placeHolderItem.before(list.draggedItem);
 						list.placeHolderItem.remove();
@@ -263,7 +268,7 @@
 						return false;
 
 					var children = function() { return $(nlist.container).children().not(nlist.draggedItem); };
-					var fixed = children().filter(opts.itemSelectorExclude).each(function(i) { this.idx = children().index(this); });
+					var fixed = children().not(opts.itemSelector).each(function(i) { this.idx = children().index(this); });
 
 					if (lastPos == null || lastPos.top > list.draggedItem.offset().top || lastPos.left > list.draggedItem.offset().left)
 						$(nlist.pos[ei].elm).before(list.placeHolderItem);
@@ -321,13 +326,12 @@
 	};
 
 	$.fn.dragsort.defaults = {
-		itemSelector: "li",
-		itemSelectorExclude: "",
-		dragSelector: "li",
+		itemSelector: "",
+		dragSelector: "",
 		dragSelectorExclude: "input, textarea, a[href]",
 		dragEnd: function() { },
 		dragBetween: false,
-		placeHolderTemplate: "<li>&nbsp;</li>",
+		placeHolderTemplate: "",
 		scrollContainer: window,
 		scrollSpeed: 5
 	};

@@ -86,7 +86,7 @@
 	<br/>
 	<dl>
 		<dt>dragSelector</dt>
-		<dd>The <a href="http://docs.jquery.com/Selectors">CSS selector</a> of the element inside the list item to act as the drag handle. The default is LI.</dd>
+		<dd>The <a href="http://docs.jquery.com/Selectors">CSS selector</a> of the element inside the list item to act as the drag handle. The default is list items e.g. LI.</dd>
 		<dt>dragSelectorExclude</dt>
 		<dd>The css selector of the elements inside the dragSelector to not trigger dragsort. The default is "input, textarea, a[href]".</dd>
 		<dt>dragEnd</dt>
@@ -94,11 +94,13 @@
 		<dt>dragBetween</dt>
 		<dd>Set to "true" if you want to enable the ability to drag between selected lists. The default is false.</dd>
 		<dt>placeHolderTemplate</dt>
-		<dd>The html of the place holder for the dragged item. The default is "&lt;li&gt;&lt;/li&gt;".</dd>
+		<dd>The html of the place holder for the dragged item. The default is empty list item e.g. "&lt;li&gt;&lt;/li&gt;".</dd>
 		<dt>scrollContainer</dt>
 		<dd>The css selector of the element that is to act as the scroll container e.g. a div with overflow set to auto. The default is window.</dd>
 		<dt>scrollSpeed</dt>
 		<dd>A number that represents the speed that the page will scroll when dragging an item outside the scroll container, a higher value is faster and a lower value is slower. Set to 0 to disable scrolling. The default is 5.</dd>
+		<dt>itemSelector</dt>
+		<dd>The css selector of the list items that's moveable. Will only match elements that are immediate descendants of list element. The default is tag name of first descendant e.g. LI.</dd>
 	</dl>
 </body>
 </html>
