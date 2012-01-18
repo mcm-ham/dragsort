@@ -28,7 +28,7 @@
 				container: cont,
 
 				init: function() {
-					var tagName = $(this.container).children(":first").get(0).tagName.toLowerCase();
+					var tagName = $(this.container).children().size() == 0 ? "li" : $(this.container).children(":first").get(0).tagName.toLowerCase();
 					if (opts.itemSelector == "")
 						opts.itemSelector = tagName;
 					if (opts.dragSelector == "")
