@@ -28,7 +28,7 @@
         <ul id="gallery">
             <asp:Repeater ID="Gallery" runat="server">
                 <ItemTemplate>
-                    <li itemID='<%# Container.ItemIndex %>'>
+                    <li data-itemid='<%# Container.ItemIndex %>'>
                         <div><%# Container.DataItem %></div>
                     </li>
                 </ItemTemplate>
@@ -40,7 +40,7 @@
 		    $("#gallery").dragsort({ dragSelector: "div", dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 
 		    function saveOrder() {
-				var data = $("#gallery li").map(function() { return $(this).attr("itemID"); }).get();
+				var data = $("#gallery li").map(function() { return $(this).data("itemid"); }).get();
 				$.ajax({ url: "example.aspx/SaveListOrder", data: '{ids:["' + data.join('","') + '"]}', dataType: "json", type: "POST", contentType: "application/json; charset=utf-8" });
 		    };
 	    </script>

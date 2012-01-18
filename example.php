@@ -38,7 +38,7 @@
 			<?php
 				$list = array("blue", "orange", "brown", "red", "yellow", "green", "black", "white", "purple");
 				for ($idx = 0; $idx < count($list); $idx+=1) {
-					echo "<li itemID='" . $idx . "'>";
+					echo "<li data-itemid='" . $idx . "'>";
 					echo "<div>" . $list[$idx] . "</div>";
 					echo "</li>";
 				}
@@ -50,7 +50,7 @@
 		    $("#gallery").dragsort({ dragSelector: "div", dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 
 		    function saveOrder() {
-				var data = $("#gallery li").map(function() { return $(this).attr("itemID"); }).get();
+				var data = $("#gallery li").map(function() { return $(this).data("itemid"); }).get();
 		        $.post("example.php", { "ids[]": data });
 		    };
 	    </script>
