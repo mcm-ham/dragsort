@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<style type="text/css">
-		body { font-family:Arial; font-size:12pt; padding:20px; width:800px; margin:20px auto; border:solid 1px black; }
+		body { font-family:Arial; font-size:12pt; padding:20px; width:820px; margin:20px auto; border:solid 1px black; }
 		h1 { font-size:16pt; }
 		h2 { font-size:13pt; }
 		ul { margin:0px; padding:0px; margin-left:20px; }
@@ -82,17 +82,22 @@
 	<div style="clear:both;"></div>
 
 	<h2>Usage</h2>
-	$("ul").dragsort({ dragSelector: "li", dragEnd: function() { }, dragBetween: false, placeHolderTemplate: "&lt;li&gt;&lt;/li&gt;" });<br/>
+	
+	<p>$("ul").dragsort({ dragSelector: "li", dragEnd: function() { }, dragBetween: false, placeHolderTemplate: "&lt;li&gt;&lt;/li&gt;" });</p>
+	<p>$("ul").dragsort("destory");</p>
 	<br/>
+
 	<dl>
 		<dt>dragSelector</dt>
-		<dd>The <a href="http://docs.jquery.com/Selectors">CSS selector</a> of the element inside the list item to act as the drag handle. The default is the list item itself e.g. LI.</dd>
+		<dd>The <a href="http://api.jquery.com/category/selectors/">CSS selector</a> of the element inside the list item to act as the drag handle. The default is the list item itself e.g. LI.</dd>
+		<dt>dragSelectorExclude</dt>
+		<dd>The css selector of the elements inside the dragSelector to not trigger dragsort. The default is "input, textarea".</dd>
 		<dt>itemSelector</dt>
-		<dd>The css selector of the list items that's moveable. Will only match elements that are immediate descendants of list container. The default is tag name of first descendant e.g. LI.</dd>
+		<dd>The css selector of the list items that are moveable. Will only match elements that are immediate children of list container. The default is tag name of first child e.g. LI.</dd>
 		<dt>dragEnd</dt>
-		<dd>The callback function that will be called after the dragging has ended (only called if the list order has changed).</dd>
+		<dd>The callback function that will be called after the dragging has ended (only called if the list order has changed). The keyword "this" in function will refer to list item that was dragged.</dd>
 		<dt>dragBetween</dt>
-		<dd>Set to "true" if you want to enable the ability to drag between selected lists. The default is false.</dd>
+		<dd>Set to "true" if you want to enable the ability to drag between selected lists (or outside list container). The default is false.</dd>
 		<dt>placeHolderTemplate</dt>
 		<dd>The html of the place holder for the dragged item. The default is empty list item e.g. "&lt;li&gt;&lt;/li&gt;".</dd>
 		<dt>scrollContainer</dt>
