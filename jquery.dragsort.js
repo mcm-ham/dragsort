@@ -1,4 +1,4 @@
-// jQuery List DragSort v0.5
+// jQuery List DragSort v0.5.0 pre-release
 // Website: http://dragsort.codeplex.com/
 // License: http://dragsort.codeplex.com/license
 
@@ -36,7 +36,14 @@
 					if (opts.placeHolderTemplate == "")
 						opts.placeHolderTemplate = "<" + tagName + ">&nbsp;</" + tagName + ">";
 
-					$(this.container).attr("data-listidx", i).mousedown(this.grabItem).bind("dragsort-uninit", this.uninit);
+					var list = this;
+					$(this.container).attr("data-listidx", i).bind("dragsort-uninit", this.uninit).mousedown(function(e) {
+						e.preventDefault(); //stop text selection
+						var item = this;
+						var trigger = function() { list.grabItem.call(item, e); $(list.container).unbind("mousemove", trigger); };
+						$(list.container).mousemove(trigger).mouseup(function() { $(list.container).unbind("mousemove", trigger); });
+					});
+
 					this.getItems().each(function(j) { $(this).attr("data-itemidx", j); });
 					this.styleDragHandlers(true);
 				},
@@ -56,7 +63,7 @@
 				},
 
 				grabItem: function(e) {
-					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.dragSelectorExclude).size() > 0 || $(e.target).closest(opts.itemSelector).size() == 0)
+					if (e.which != 1 || $(e.target).closest(opts.itemSelector).size() == 0)
 						return;
 
 					var elm = e.target;
@@ -130,12 +137,10 @@
 					}, 10);
 
 					list.setPos(e.pageX, e.pageY);
-					$(document).bind("selectstart", list.stopBubble); //stop ie text selection
 					$(document).bind("mousemove", list.swapItems);
 					$(document).bind("mouseup", list.dropItem);
 					if (opts.scrollContainer != window)
 						$(window).bind("DOMMouseScroll mousewheel", list.wheel);
-					return false; //stop moz text selection
 				},
 
 				setPos: function(x, y) {
@@ -241,15 +246,12 @@
 					if (changed)
 						opts.dragEnd.apply(list.draggedItem);
 					list.draggedItem = null;
-					$(document).unbind("selectstart", list.stopBubble);
 					$(document).unbind("mousemove", list.swapItems);
 					$(document).unbind("mouseup", list.dropItem);
 					if (opts.scrollContainer != window)
 						$(window).unbind("DOMMouseScroll mousewheel", list.wheel);
 					return false;
 				},
-
-				stopBubble: function() { return false; },
 
 				swapItems: function(e) {
 					if (list.draggedItem == null)
@@ -328,7 +330,6 @@
 	$.fn.dragsort.defaults = {
 		itemSelector: "",
 		dragSelector: "",
-		dragSelectorExclude: "input, textarea, a[href]",
 		dragEnd: function() { },
 		dragBetween: false,
 		placeHolderTemplate: "",
