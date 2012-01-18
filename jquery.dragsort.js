@@ -1,4 +1,4 @@
-// jQuery List DragSort v0.5.0 pre-release
+// jQuery List DragSort v0.5.0
 // Website: http://dragsort.codeplex.com/
 // License: http://dragsort.codeplex.com/license
 
@@ -61,7 +61,7 @@
 
 				grabItem: function(e) {
 					//if not left click or if clicked on excluded element (e.g. text box) or not a moveable list item return
-					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.itemSelector).size() == 0)
+					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.dragSelectorExclude).size() > 0 || $(e.target).closest(opts.itemSelector).size() == 0)
 						return;
 
 					//prevents selection, stops issue on Fx where dragging hyperlink doesn't work and on IE where it triggers mousemove even though mouse hasn't moved,
