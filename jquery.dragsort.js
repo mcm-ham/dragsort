@@ -39,9 +39,8 @@
 					if (opts.placeHolderTemplate == "")
 						opts.placeHolderTemplate = "<" + tagName + ">&nbsp;</" + tagName + ">";
 
-					//listidx and itemidx are used to determine if order has changed (dragEnd is only called if order changes), listidx allows reference back to correct list variable instance
+					//listidx allows reference back to correct list variable instance
 					$(this.container).attr("data-listidx", i).mousedown(this.grabItem).bind("dragsort-uninit", this.uninit);
-					this.getItems().each(function(j) { $(this).attr("data-itemidx", j).attr("data-listidx", i); });
 					this.styleDragHandlers(true);
 				},
 
@@ -93,6 +92,9 @@
 
 					list = lists[$(this).attr("data-listidx")];
 					list.draggedItem = $(e.target).closest(opts.itemSelector);
+
+					//record current position so on dragend we know if the dragged item changed position or not
+					list.draggedItem.attr("data-origpos", $(this).attr("data-listidx") + "-" + list.getItems().index(list.draggedItem));
 
 					//calculate mouse offset relative to draggedItem
 					var mt = parseInt(list.draggedItem.css("marginTop"));
@@ -260,21 +262,11 @@
 					window.clearInterval(list.scroll.scrollY);
 					window.clearInterval(list.scroll.scrollX);
 
-					var changed = false; //determine if list order has changed
-					$(lists).each(function() {
-						this.getItems().each(function(j) {
-							if (parseInt($(this).attr("data-listidx")) != i) {
-								changed = true;
-								$(this).attr("data-listidx", i);
-							}
-							if (parseInt($(this).attr("data-itemidx")) != j) {
-								changed = true;
-								$(this).attr("data-itemidx", j);
-							}
-						});
-					});
-					if (changed)
+					//if position changed call dragEnd
+					if (list.draggedItem.attr("data-origpos") != $(lists).index(list) + "-" + list.getItems().index(list.draggedItem))
 						opts.dragEnd.apply(list.draggedItem);
+					list.draggedItem.removeAttr("data-origpos");
+
 					list.draggedItem = null;
 					$(document).unbind("mousemove", list.swapItems);
 					$(document).unbind("mouseup", list.dropItem);
