@@ -41,7 +41,7 @@
 
 					//listidx and itemidx are used to determine if order has changed (dragEnd is only called if order changes), listidx allows reference back to correct list variable instance
 					$(this.container).attr("data-listidx", i).mousedown(this.grabItem).bind("dragsort-uninit", this.uninit);
-					this.getItems().each(function(j) { $(this).attr("data-itemidx", j); });
+					this.getItems().each(function(j) { $(this).attr("data-itemidx", j).attr("data-listidx", i); });
 					this.styleDragHandlers(true);
 				},
 
@@ -263,9 +263,9 @@
 					var changed = false; //determine if list order has changed
 					$(lists).each(function() {
 						this.getItems().each(function(j) {
-							if (parseInt($(this).attr("data-parentidx")) != i) {
+							if (parseInt($(this).attr("data-listidx")) != i) {
 								changed = true;
-								$(this).attr("data-parentidx", i);
+								$(this).attr("data-listidx", i);
 							}
 							if (parseInt($(this).attr("data-itemidx")) != j) {
 								changed = true;
