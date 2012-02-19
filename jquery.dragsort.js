@@ -114,11 +114,7 @@
 					//create placeholder item
 					var h = list.draggedItem.height();
 					var w = list.draggedItem.width();
-					if (opts.itemSelector == "td") {
-						//dragging td still leaves gap behind unlike li so don't use a new element to act as a visual placeholder
-						list.placeHolderItem = list.draggedItem.attr("data-placeholder", true);
-					}
-					else if (opts.itemSelector == "tr") {
+					if (opts.itemSelector == "tr") {
 						list.draggedItem.children().each(function() { $(this).width($(this).width()); });
 						list.placeHolderItem = list.draggedItem.clone().attr("data-placeholder", true);
 						list.draggedItem.after(list.placeHolderItem);
@@ -126,6 +122,11 @@
 					} else {
 						list.draggedItem.after(opts.placeHolderTemplate);
 						list.placeHolderItem = list.draggedItem.next().css({ height: h, width: w }).attr("data-placeholder", true);
+					}
+
+					if (opts.itemSelector == "td") {
+						var listTable = list.draggedItem.closest("table").get(0);
+						$("<table id='" + listTable.id + "' style='border-width: 0px;' class='dragSortItem " + listTable.className + "'><tr></tr></table>").appendTo("body").children().append(list.draggedItem);
 					}
 
 					//style draggedItem while dragging
@@ -249,12 +250,10 @@
 
 					list.styleDragHandlers(true);
 
-					if (opts.itemSelector != "td") {
-						list.placeHolderItem.before(list.draggedItem);
-						list.placeHolderItem.remove();
-					}
+					list.placeHolderItem.before(list.draggedItem);
+					list.placeHolderItem.remove();
 
-					$("[data-droptarget]").remove();
+					$("[data-droptarget], .dragSortItem").remove();
 
 					window.clearInterval(list.scroll.scrollY);
 					window.clearInterval(list.scroll.scrollX);
