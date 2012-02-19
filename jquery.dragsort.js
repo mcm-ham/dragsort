@@ -222,18 +222,15 @@
 					}
 				},
 
-				//build a table recording all the positions of the list items
+				//build a table recording all the positions of the moveable list items
 				buildPositionTable: function() {
-					var item = this.draggedItem == null ? null : this.draggedItem.get(0);
 					var pos = [];
-					this.getItems().each(function(i, elm) {
-						if (elm != item) {
-							var loc = $(elm).offset();
-							loc.right = loc.left + $(elm).width();
-							loc.bottom = loc.top + $(elm).height();
-							loc.elm = elm;
-							pos.push(loc);
-						}
+					this.getItems().not([list.draggedItem[0], list.placeHolderItem[0]]).each(function(i) {
+						var loc = $(this).offset();
+						loc.right = loc.left + $(this).outerWidth();
+						loc.bottom = loc.top + $(this).outerHeight();
+						loc.elm = this;
+						pos[i] = loc;
 					});
 					this.pos = pos;
 				},
@@ -291,8 +288,8 @@
 						nlist = lists[i];
 					}
 
-					//if not over the list or is over the placeholder return
-					if (ei == -1 || $(nlist.pos[ei].elm).attr("data-placeholder"))
+					//if not over another moveable list item return
+					if (ei == -1)
 						return false;
 
 					//save fixed items locations
