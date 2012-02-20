@@ -59,8 +59,12 @@
 				},
 
 				grabItem: function(e) {
+					var list = lists[$(this).attr("data-listidx")];
+					var item = $(e.target).closest("[data-listidx] > " + opts.tagName).get(0);
+					var insideMoveableItem = list.getItems().filter(function() { return this == item; }).size() > 0;
+
 					//if not left click or if clicked on excluded element (e.g. text box) or not a moveable list item return
-					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.dragSelectorExclude).size() > 0 || !$(e.target).is("[data-listidx] > " + opts.itemSelector + " *"))
+					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.dragSelectorExclude).size() > 0 || !insideMoveableItem)
 						return;
 
 					//prevents selection, stops issue on Fx where dragging hyperlink doesn't work and on IE where it triggers mousemove even though mouse hasn't moved,
@@ -77,10 +81,9 @@
 					$(dragHandle).css("cursor", "move");
 
 					//on mousedown wait for movement of mouse before triggering dragsort script (dragStart) to allow clicking of hyperlinks to work
-					var list = lists[$(this).attr("data-listidx")];
-					var item = this;
+					var listElem = this;
 					var trigger = function() {
-						list.dragStart.call(item, e);
+						list.dragStart.call(listElem, e);
 						$(list.container).unbind("mousemove", trigger);
 					};
 					$(list.container).mousemove(trigger).mouseup(function() { $(list.container).unbind("mousemove", trigger); $(dragHandle).css("cursor", $(dragHandle).attr("data-cursor")); });
