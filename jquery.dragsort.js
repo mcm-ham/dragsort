@@ -94,7 +94,7 @@
 						list.dropItem();
 
 					list = lists[$(this).attr("data-listidx")];
-					list.draggedItem = $(e.target).closest(opts.itemSelector);
+					list.draggedItem = $(e.target).closest("[data-listidx] > " + opts.tagName)
 
 					//record current position so on dragend we know if the dragged item changed position or not
 					list.draggedItem.attr("data-origpos", $(this).attr("data-listidx") + "-" + list.getItems().index(list.draggedItem));
