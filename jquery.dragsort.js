@@ -1,4 +1,4 @@
-// jQuery List DragSort v0.5.0
+// jQuery List DragSort v0.5.1
 // Website: http://dragsort.codeplex.com/
 // License: http://dragsort.codeplex.com/license
 
@@ -31,13 +31,13 @@
 
 				init: function() {
 					//set options to default values if not set
-					var tagName = $(this.container).children().size() == 0 ? "li" : $(this.container).children(":first").get(0).tagName.toLowerCase();
+					opts.tagName = $(this.container).children().size() == 0 ? "li" : $(this.container).children().get(0).tagName.toLowerCase();
 					if (opts.itemSelector == "")
-						opts.itemSelector = tagName;
+						opts.itemSelector = opts.tagName;
 					if (opts.dragSelector == "")
-						opts.dragSelector = tagName;
+						opts.dragSelector = opts.tagName;
 					if (opts.placeHolderTemplate == "")
-						opts.placeHolderTemplate = "<" + tagName + ">&nbsp;</" + tagName + ">";
+						opts.placeHolderTemplate = "<" + opts.tagName + ">&nbsp;</" + opts.tagName + ">";
 
 					//listidx allows reference back to correct list variable instance
 					$(this.container).attr("data-listidx", i).mousedown(this.grabItem).bind("dragsort-uninit", this.uninit);
@@ -60,7 +60,7 @@
 
 				grabItem: function(e) {
 					//if not left click or if clicked on excluded element (e.g. text box) or not a moveable list item return
-					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.dragSelectorExclude).size() > 0 || $(e.target).closest(opts.itemSelector).size() == 0)
+					if (e.which != 1 || $(e.target).is(opts.dragSelectorExclude) || $(e.target).closest(opts.dragSelectorExclude).size() > 0 || !$(e.target).is("[data-listidx] > " + opts.itemSelector + " *"))
 						return;
 
 					//prevents selection, stops issue on Fx where dragging hyperlink doesn't work and on IE where it triggers mousemove even though mouse hasn't moved,
@@ -114,7 +114,7 @@
 					//create placeholder item
 					var h = list.draggedItem.height();
 					var w = list.draggedItem.width();
-					if (opts.itemSelector == "tr") {
+					if (opts.tagName == "tr") {
 						list.draggedItem.children().each(function() { $(this).width($(this).width()); });
 						list.placeHolderItem = list.draggedItem.clone().attr("data-placeholder", true);
 						list.draggedItem.after(list.placeHolderItem);
@@ -124,7 +124,7 @@
 						list.placeHolderItem = list.draggedItem.next().css({ height: h, width: w }).attr("data-placeholder", true);
 					}
 
-					if (opts.itemSelector == "td") {
+					if (opts.tagName == "td") {
 						var listTable = list.draggedItem.closest("table").get(0);
 						$("<table id='" + listTable.id + "' style='border-width: 0px;' class='dragSortItem " + listTable.className + "'><tr></tr></table>").appendTo("body").children().append(list.draggedItem);
 					}
@@ -336,7 +336,7 @@
 						if (ph.size() > 0 && dt.size() > 0)
 							dt.remove();
 						else if (ph.size() == 0 && dt.size() == 0) {
-							if (opts.itemSelector == "td")
+							if (opts.tagName == "td")
 								$(opts.placeHolderTemplate).attr("data-droptarget", true).appendTo(this.container);
 							else
 								//list.placeHolderItem.clone().removeAttr("data-placeholder") crashes in IE7 and jquery 1.5.1 (doesn't in jquery 1.4.2 or IE8)
