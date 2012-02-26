@@ -183,15 +183,12 @@
 						left = Math.min(this.offsetLimit.right, Math.max(left, this.offsetLimit.left));
 					}
 
-					//adjust top, left calculations to parent element instead of window if it's relative or absolute
-					this.draggedItem.parents().each(function() {
-						if ($(this).css("position") != "static" && (!$.browser.mozilla || $(this).css("display") != "table")) {
-							var offset = $(this).offset();
-							top -= offset.top;
-							left -= offset.left;
-							return false;
-						}
-					});
+					//adjust top & left calculations to parent offset
+					var parent = this.draggedItem.offsetParent().not("body").offset(); //offsetParent returns body even when it's static, if not static offset is only factoring margin
+					if (parent != null) {
+						top -= parent.top;
+						left -= parent.left;
+					}
 
 					//set x or y auto-scroll amount
 					if (opts.scrollContainer == window) {
