@@ -96,8 +96,8 @@
 					list = lists[$(this).attr("data-listidx")];
 					list.draggedItem = $(e.target).closest("[data-listidx] > " + opts.tagName)
 
-					//record current position so on dragend we know if the dragged item changed position or not
-					list.draggedItem.attr("data-origpos", $(this).attr("data-listidx") + "-" + list.getItems().index(list.draggedItem));
+					//record current position so on dragend we know if the dragged item changed position or not, not using getItems to allow dragsort to restore dragged item to original location in relation to fixed items
+					list.draggedItem.attr("data-origpos", $(this).attr("data-listidx") + "-" + $(list.container).children().index(list.draggedItem));
 
 					//calculate mouse offset relative to draggedItem
 					var mt = parseInt(list.draggedItem.css("marginTop"));
@@ -259,8 +259,17 @@
 					window.clearInterval(list.scroll.scrollX);
 
 					//if position changed call dragEnd
-					if (list.draggedItem.attr("data-origpos") != $(lists).index(list) + "-" + list.getItems().index(list.draggedItem))
-						opts.dragEnd.apply(list.draggedItem);
+					if (list.draggedItem.attr("data-origpos") != $(lists).index(list) + "-" + $(list.container).children().index(list.draggedItem))
+						if (opts.dragEnd.apply(list.draggedItem) == false) { //if dragEnd returns false revert order
+							var pos = list.draggedItem.attr("data-origpos").split('-');
+							var nextItem = $(lists[pos[0]].container).children().not(list.draggedItem).eq(pos[1]);
+							if (nextItem.size() > 0)
+								nextItem.before(list.draggedItem);
+							else if (pos[1] == 0) //was the only item in list
+								$(lists[pos[0]].container).prepend(list.draggedItem);
+							else //was the last item in list
+								$(lists[pos[0]].container).append(list.draggedItem);
+						}
 					list.draggedItem.removeAttr("data-origpos");
 
 					list.draggedItem = null;
