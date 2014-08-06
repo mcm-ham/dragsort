@@ -168,7 +168,7 @@
 					$(document).bind("mousemove", list.swapItems);
 					$(document).bind("mouseup", list.dropItem);
 					if (opts.scrollContainer != window)
-						$(window).bind("DOMMouseScroll mousewheel", list.wheel);
+						$(window).bind("wheel", list.wheel);
 				},
 
 				//set position of draggedItem
@@ -212,12 +212,13 @@
 
 				//if scroll container is a div allow mouse wheel to scroll div instead of window when mouse is hovering over
 				wheel: function(e) {
-					if (($.browser.safari || $.browser.mozilla) && list && opts.scrollContainer != window) {
+					if (list && opts.scrollContainer != window) {
 						var cont = $(opts.scrollContainer);
 						var offset = cont.offset();
-						if (e.pageX > offset.left && e.pageX < offset.left + cont.width() && e.pageY > offset.top && e.pageY < offset.top + cont.height()) {
-							var delta = e.detail ? e.detail * 5 : e.wheelDelta / -2;
-							cont.scrollTop(cont.scrollTop() + delta);
+						e = e.originalEvent;
+						if (e.clientX > offset.left && e.clientX < offset.left + cont.width() && e.clientY > offset.top && e.clientY < offset.top + cont.height()) {
+							var deltaY = (e.deltaMode == 0 ? 1 : 10) * e.deltaY;
+							cont.scrollTop(cont.scrollTop() + deltaY);
 							e.preventDefault();
 						}
 					}
@@ -276,7 +277,7 @@
 					$(document).unbind("mousemove", list.swapItems);
 					$(document).unbind("mouseup", list.dropItem);
 					if (opts.scrollContainer != window)
-						$(window).unbind("DOMMouseScroll mousewheel", list.wheel);
+						$(window).unbind("wheel", list.wheel);
 					return false;
 				},
 

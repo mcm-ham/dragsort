@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 	if ($_POST) {
 		$ids = $_POST["ids"];
 		for ($idx = 0; $idx < count($ids); $idx+=1) {
@@ -9,10 +9,12 @@
 		return;
 	}
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
+    <title>DragSort Example</title>
+	<meta charset="utf-8" />
 	<style type="text/css">
 		body { font-family:Arial; font-size:12pt; padding:20px; width: 800px; margin:20px auto; border:solid 1px black; }
 		h1 { font-size:16pt; }
@@ -25,7 +27,7 @@
 </head>
 <body>
     <div>
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
         
 		<h1>jQuery List DragSort PHP Example</h1>
 	    

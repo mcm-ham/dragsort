@@ -1,7 +1,9 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="example.aspx.cs" Inherits="example" %><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="example.aspx.cs" Inherits="example" %><!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head runat="server">
+    <title>DragSort Example</title>
+	<meta charset="utf-8" />
 	<style type="text/css">
 		body { font-family:Arial; font-size:12pt; padding:20px; width: 800px; margin:20px auto; border:solid 1px black; }
 		h1 { font-size:16pt; }
@@ -13,8 +15,7 @@
 	</style>
 </head>
 <body>
-    <script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
-	<% /* %><script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1-vsdoc.js"></script><% */ %>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 	<form id="form1" runat="server">
     <div>
         
@@ -38,7 +39,7 @@
 		<script type="text/javascript" src="jquery.dragsort.js"></script>
 		<script type="text/javascript">
 		    $("#gallery").dragsort({ dragSelector: "div", dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
-
+            
 		    function saveOrder() {
 				var data = $("#gallery li").map(function() { return $(this).data("itemid"); }).get();
 				$.ajax({ url: "example.aspx/SaveListOrder", data: '{ids:["' + data.join('","') + '"]}', dataType: "json", type: "POST", contentType: "application/json; charset=utf-8" });
