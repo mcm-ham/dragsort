@@ -1,4 +1,4 @@
-// jQuery List DragSort v0.5.2 dev
+// jQuery List DragSort v0.5.2
 // Website: http://dragsort.codeplex.com/
 // License: http://dragsort.codeplex.com/license
 

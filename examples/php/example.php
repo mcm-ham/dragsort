@@ -47,7 +47,7 @@
 			?>
 		</ul>
 		
-		<script type="text/javascript" src="jquery.dragsort.js"></script>
+		<script type="text/javascript" src="..\..\jquery.dragsort.js"></script>
 		<script type="text/javascript">
 		    $("#gallery").dragsort({ dragSelector: "div", dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 
