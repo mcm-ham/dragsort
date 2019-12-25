@@ -27,7 +27,7 @@
 </head>
 <body>
     <div>
-        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="//code.jquery.com/jquery-3.4.1.slim.min.js"></script>
         
 		<h1>jQuery List DragSort PHP Example</h1>
 	    
@@ -52,8 +52,11 @@
 		    $("#gallery").dragsort({ dragSelector: "div", dragEnd: saveOrder, placeHolderTemplate: "<li class='placeHolder'><div></div></li>" });
 
 		    function saveOrder() {
-				var data = $("#gallery li").map(function() { return $(this).data("itemid"); }).get();
-		        $.post("example.php", { "ids[]": data });
+                var data = $("#gallery li").map(function() { return $(this).data("itemid"); }).get();
+                fetch("example.php", {
+                    method: "POST",
+                    body: { "ids[]": data }
+                });
 		    };
 	    </script>
         
